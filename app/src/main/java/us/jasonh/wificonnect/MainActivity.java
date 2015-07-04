@@ -38,22 +38,14 @@ public class MainActivity extends AppCompatActivity {
         WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         int previousNetworkId = wifiInfo.getNetworkId();
+        int networkId = wifiManager.addNetwork(wifiConfig);
 
-        wifiManager.addNetwork(wifiConfig);
+        wifiManager.disconnect();
+        wifiManager.enableNetwork(networkId, true);
+        wifiManager.reconnect();
 
-        List<WifiConfiguration> configuredNetworksList = wifiManager.getConfiguredNetworks();
-        for (WifiConfiguration configuredNetwork : configuredNetworksList) {
-            if (configuredNetwork.SSID != null && configuredNetwork.SSID.equals("\"" + mohawkSsid + "\"")) {
-                wifiManager.disconnect();
-                wifiManager.enableNetwork(configuredNetwork.networkId, true);
-                wifiManager.reconnect();
-
-                Toast.makeText(getApplicationContext(), "Connected to gadget wifi.",
-                        Toast.LENGTH_LONG).show();
-
-                break;
-            }
-        }
+        Toast.makeText(getApplicationContext(), "Connected to gadget wifi.",
+                Toast.LENGTH_LONG).show();
 
         reconnectToPreviousNetwork(wifiManager, previousNetworkId);
 
